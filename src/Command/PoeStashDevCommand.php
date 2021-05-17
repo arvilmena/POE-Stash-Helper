@@ -148,7 +148,7 @@ class PoeStashDevCommand extends Command
                             $highestPoint['amulet'] = $points;
                         }
                         if ($points >= 7) {
-                            $goodGears[] = [
+                            $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
                                 'stashName' => $stash['n'],
@@ -163,7 +163,7 @@ class PoeStashDevCommand extends Command
                             $highestPoint['ring'] = $points;
                         }
                         if ($points >= 7) {
-                            $goodGears[] = [
+                            $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
                                 'stashName' => $stash['n'],
@@ -182,7 +182,7 @@ class PoeStashDevCommand extends Command
                             $highestPoint['gloves'] = $points;
                         }
                         if ($points >= 7) {
-                            $goodGears[] = [
+                            $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
                                 'stashName' => $stash['n'],
@@ -197,7 +197,7 @@ class PoeStashDevCommand extends Command
                             $highestPoint['boots'] = $points;
                         }
                         if ($points >= 5) {
-                            $goodGears[] = [
+                            $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
                                 'stashName' => $stash['n'],
@@ -228,7 +228,7 @@ class PoeStashDevCommand extends Command
                             $highestPoint['helmets'] = $points;
                         }
                         if ($points >= 8) {
-                            $goodGears[] = [
+                            $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
                                 'stashName' => $stash['n'],
@@ -246,7 +246,7 @@ class PoeStashDevCommand extends Command
                             $highestPoint['belts'] = $points;
                         }
                         if ($points >= 5) {
-                            $goodGears[] = [
+                            $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
                                 'stashName' => $stash['n'],

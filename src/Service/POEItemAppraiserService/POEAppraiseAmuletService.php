@@ -36,6 +36,7 @@ class POEAppraiseAmuletService {
             }
             if ( $tally['explicitMods'][$r] > 46 ) {
                 $points++;
+                $points++;
             }
         }
         //tier chaos
@@ -46,6 +47,7 @@ class POEAppraiseAmuletService {
             $points++;
         }
         if ( $tally['explicitMods']['chaos'] > 31 ) {
+            $points++;
             $points++;
         }
 
@@ -77,10 +79,38 @@ class POEAppraiseAmuletService {
         }
 
         //mana regeneration
-        if ( $tally['explicitMods']['manaRegeneration'] > 50 ) {
+        if ( $tally['explicitMods']['manaRegeneration'] >= 50 ) {
             $points++;
         }
-        if ( $tally['explicitMods']['manaRegeneration'] > 60 ) {
+        if ( $tally['explicitMods']['manaRegeneration'] >= 60 ) {
+            $points++;
+            $points++;
+        }
+
+        // flat mana
+        if ( $tally['explicitMods']['flatMana'] >= 69 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatMana'] >= 74 ) {
+            $points++;
+            $points++;
+        }
+
+        // flat ES
+        if ( $tally['explicitMods']['flatES'] >= 38 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatES'] >= 44 ) {
+            $points++;
+            $points++;
+        }
+
+        // elemental attack
+        if ( $tally['explicitMods']['increasedElementalDamageWithAtk'] >= 37 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['increasedElementalDamageWithAtk'] >= 43 ) {
+            $points++;
             $points++;
         }
 

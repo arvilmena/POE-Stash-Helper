@@ -86,6 +86,33 @@ class POEAppraiseBeltService {
             $points++;
         }
 
+        // flat mana
+        if ( $tally['explicitMods']['flatMana'] >= 60 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatMana'] >= 65 ) {
+            $points++;
+            $points++;
+        }
+
+        // flat ES
+        if ( $tally['explicitMods']['flatES'] >= 38 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatES'] >= 44 ) {
+            $points++;
+            $points++;
+        }
+
+        // elemental attack
+        if ( $tally['explicitMods']['increasedElementalDamageWithAtk'] >= 37 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['increasedElementalDamageWithAtk'] >= 43 ) {
+            $points++;
+            $points++;
+        }
+
         return [
             'points' => $points,
             'tally' => $tally

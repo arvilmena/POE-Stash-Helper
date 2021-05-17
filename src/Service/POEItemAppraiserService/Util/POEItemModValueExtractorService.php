@@ -21,6 +21,90 @@ class POEItemModValueExtractorService {
     const FLASK_EFFECT_DURATION_PATTERN = '/((\d+)\% increased Flask Effect Duration)/';
     const FLASK_CHARGES_GAINED_PATTERN = '/((\d+)\% increased Flask Charges gained)/';
     const FLASK_CHARGES_USED_PATTERN = '/((\d+)\% reduced Flask Charges used)/';
+    const FLAT_ENERGY_SHIELD_PATTERN = '/(\+(\d+) to maximum Energy Shield)/';
+    const FLAT_MANA_PATTERN = '/(\+(\d+) to maximum Mana)/';
+    const FLAT_EVASION_PATTERN = '/(\+(\d+) to maximum Mana)/';
+    const INCREASED_ELEMENTAL_DAMAGE_PATTERN = '/((\d+)\% increased Elemental Damage with Attack Skills)/';
+
+    public static function getTotalFlatEvasion(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::FLAT_EVASION_PATTERN, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getTotalIncreasedElementalDamage(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::INCREASED_ELEMENTAL_DAMAGE_PATTERN, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getTotalFlatMana(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::FLAT_MANA_PATTERN, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getTotalFlatEnergyShield(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::FLAT_ENERGY_SHIELD_PATTERN, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
 
     public static function getTotalFlaskChargesUsed(array $item) : array
     {
@@ -302,6 +386,10 @@ class POEItemModValueExtractorService {
                 'flaskChargesGained' => self::getTotalFlaskChargesGained($item)[$modType],
                 'flaskChargesUsed' => self::getTotalFlaskChargesUsed($item)[$modType],
                 'flaskEffectDuration' => self::getTotalFlaskEffectDuration($item)[$modType],
+                'flatMana' => self::getTotalFlatMana($item)[$modType],
+                'flatES' => self::getTotalFlatEnergyShield($item)[$modType],
+                'flatEvasion' => self::getTotalFlatEvasion($item)[$modType],
+                'increasedElementalDamageWithAtk' => self::getTotalIncreasedElementalDamage($item)[$modType],
             ];
         }
         return $result;

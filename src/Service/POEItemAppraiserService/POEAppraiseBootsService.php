@@ -76,11 +76,30 @@ class POEAppraiseBootsService {
             $points++;
         }
 
+        // flat ES
+        if ( $tally['explicitMods']['flatES'] >= 31 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatES'] >= 39 ) {
+            $points++;
+            $points++;
+        }
+
+        // flat mana
+        if ( $tally['explicitMods']['flatMana'] >= 65 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatMana'] >= 69 ) {
+            $points++;
+            $points++;
+        }
+
         // movementspeed
         if ( $tally['explicitMods']['movementSpeed'] > 25 ) {
             $points++;
         }
         if ( $tally['explicitMods']['movementSpeed'] > 30 ) {
+            $points++;
             $points++;
         }
         if ( $tally['explicitMods']['movementSpeed'] >= 35 ) {

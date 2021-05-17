@@ -95,6 +95,41 @@ class POEAppraiseHelmetService {
             $points++;
         }
 
+        // flat mana
+        if ( $tally['explicitMods']['flatMana'] >= 65 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatMana'] >= 69 ) {
+            $points++;
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatMana'] >= 74 ) {
+            $points++;
+            $points++;
+        }
+
+        // flat ES
+        if ( $tally['explicitMods']['flatES'] >= 39 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatES'] >= 50 ) {
+            $points++;
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatES'] >= 61 ) {
+            $points++;
+            $points++;
+        }
+
+        // flat Evasion
+        if ( $tally['explicitMods']['flatEvasion'] >= 36 ) {
+            $points++;
+        }
+        if ( $tally['explicitMods']['flatEvasion'] >= 61 ) {
+            $points++;
+            $points++;
+        }
+
         return [
             'points' => $points,
             'tally' => $tally
