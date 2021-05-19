@@ -82,9 +82,28 @@ class PoeStashDevCommand extends Command
             'helmets' => 0,
         ];
 
+        $items = [];
+        $tabs = [];
         foreach($stashes as $stash) {
+            $tab = [
+                'i' => $stash['i'],
+                'n' => $stash['n']
+            ];
+            $io->info('fetching stash ' . $stash['i'] . ' - ' . $stash['n']);
+            $stashItems = $this->POEStashListFetcherService->getStashAtIndex($this->POEWebsiteBrowserService, $stash['i']);
+            $io->text('> ' . count($stashItems) . ' found');
+            if(empty($stashItems)) {
+                continue;
+            }
+            $items = array_merge($items, $stashItems);
+            $tab['items'] = $stashItems;
+            $tabs[] = $tab;
+        }
+        $io->text(json_encode($items));
+
+        foreach($tabs as $stash) {
             $io->info('processing stash ' . $stash['i']);
-            $items = $this->POEStashListFetcherService->getStashAtIndex($this->POEWebsiteBrowserService, $stash['i']);
+            $items = $stash['items'];
 
             if(empty($items)) {
                 continue;

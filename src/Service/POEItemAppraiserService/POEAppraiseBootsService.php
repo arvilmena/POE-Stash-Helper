@@ -82,7 +82,6 @@ class POEAppraiseBootsService {
         }
         if ( $tally['explicitMods']['flatES'] >= 39 ) {
             $points++;
-            $points++;
         }
 
         // flat mana
@@ -90,7 +89,6 @@ class POEAppraiseBootsService {
             $points++;
         }
         if ( $tally['explicitMods']['flatMana'] >= 69 ) {
-            $points++;
             $points++;
         }
 

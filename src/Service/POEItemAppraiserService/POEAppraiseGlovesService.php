@@ -91,10 +91,8 @@ class POEAppraiseGlovesService {
         }
         if ( $tally['explicitMods']['flatMana'] >= 69 ) {
             $points++;
-            $points++;
         }
         if ( $tally['explicitMods']['flatMana'] >= 74 ) {
-            $points++;
             $points++;
         }
 
@@ -104,10 +102,8 @@ class POEAppraiseGlovesService {
         }
         if ( $tally['explicitMods']['flatES'] >= 39 ) {
             $points++;
-            $points++;
         }
         if ( $tally['explicitMods']['flatES'] >= 49 ) {
-            $points++;
             $points++;
         }
 
@@ -116,7 +112,6 @@ class POEAppraiseGlovesService {
             $points++;
         }
         if ( $tally['explicitMods']['flatEvasion'] >= 61 ) {
-            $points++;
             $points++;
         }
 

@@ -101,10 +101,8 @@ class POEAppraiseHelmetService {
         }
         if ( $tally['explicitMods']['flatMana'] >= 69 ) {
             $points++;
-            $points++;
         }
         if ( $tally['explicitMods']['flatMana'] >= 74 ) {
-            $points++;
             $points++;
         }
 
@@ -114,10 +112,8 @@ class POEAppraiseHelmetService {
         }
         if ( $tally['explicitMods']['flatES'] >= 50 ) {
             $points++;
-            $points++;
         }
         if ( $tally['explicitMods']['flatES'] >= 61 ) {
-            $points++;
             $points++;
         }
 
@@ -126,7 +122,6 @@ class POEAppraiseHelmetService {
             $points++;
         }
         if ( $tally['explicitMods']['flatEvasion'] >= 61 ) {
-            $points++;
             $points++;
         }
 
