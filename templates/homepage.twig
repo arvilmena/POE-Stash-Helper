@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{#    <pre>#}
+{#    {{ dump(goodGears) }}#}
+{#    </pre>#}
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        {% for stashName, items in goodGears %}
+            {% set id = 'index-' ~ loop.index %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {{ (loop.index == 1) ? 'active' : '' }}" id="{{ id }}-nav" data-bs-toggle="tab" data-bs-target="#{{ id }}-tab" type="button" role="tab" aria-controls="{{ loop.index }}" aria-selected="{{ (loop.index == 1) ? 'true' : 'false' }}">{{ stashName }}</button>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        {% for stashName, items in goodGears %}
+            {% set id = 'index-' ~ loop.index %}
+            <div class="tab-pane fade {{ (loop.index == 1) ? 'show active' : '' }}" id="{{ id }}-tab" role="tabpanel" aria-labelledby="{{ id }}">
+
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Mods</th>
+                        <th>Stash</th>
+                        <th>Points</th>
+                        <th>Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td><img src="{{ item.item.icon }}" alt="{{ item.name }}"></td>
+                                <td>
+                                    <ul>
+                                        {% for m in item.item.explicitMods  %}
+                                            <li>{{ m }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>{{ stashName }}</td>
+                                <td>{{ item.points }}</td>
+                                <td><a href="#" class="js-copy-on-click">{{ item.name }}</a></td>
+                            </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        {% endfor %}
+    </div>
+
+{#    <table class="table table-bordered">#}
+{#        <thead>#}
+{#            <tr>#}
+{#                <th></th>#}
+{#                <th>Mods</th>#}
+{#                <th>Stash</th>#}
+{#                <th>Points</th>#}
+{#                <th>Name</th>#}
+{#            </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#            {% for stashName, items in goodGears %}#}
+{#                {% for item in items %}#}
+{#                <tr>#}
+{#                    <td><img src="{{ item.item.icon }}" alt="{{ item.name }}"></td>#}
+{#                    <td>#}
+{#                        <ul>#}
+{#                            {% for m in item.item.explicitMods  %}#}
+{#                                <li>{{ m }}</li>#}
+{#                            {% endfor %}#}
+{#                        </ul>#}
+{#                    </td>#}
+{#                    <td>{{ stashName }}</td>#}
+{#                    <td>{{ item.points }}</td>#}
+{#                    <td><a href="#" class="js-copy-on-click">{{ item.name }}</a></td>#}
+{#                </tr>#}
+{#                {% endfor %}#}
+{#            {% endfor %}#}
+{#        </tbody>#}
+{#    </table>#}
+    <script>
+        (function(window, document, $, undefined) {
+            $('a.js-copy-on-click').click(function(e) {
+                e.preventDefault();
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val($(this).text()).select();
+                document.execCommand("copy");
+                $temp.remove();
+            });
+        })(window, document, jQuery);
+    </script>
+{% endblock %}
