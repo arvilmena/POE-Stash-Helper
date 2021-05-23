@@ -39,18 +39,12 @@ class POEBaseGroupAffixesTier
     private $ilvl;
 
     /**
-     * @ORM\ManyToOne(targetEntity=POEAffix::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $poeAffix;
-
-    /**
-     * @ORM\Column(type="decimal", nullable=false)
+     * @ORM\Column(type="decimal", nullable=true)
      */
     private $min;
 
     /**
-     * @ORM\Column(type="decimal", nullable=false)
+     * @ORM\Column(type="decimal", nullable=true)
      */
     private $max;
 
@@ -107,18 +101,6 @@ class POEBaseGroupAffixesTier
         return $this;
     }
 
-    public function getPoeAffix(): ?POEAffix
-    {
-        return $this->poeAffix;
-    }
-
-    public function setPoeAffix(?POEAffix $poeAffix): self
-    {
-        $this->poeAffix = $poeAffix;
-
-        return $this;
-    }
-
     public function getMin(): ?string
     {
         return $this->min;
@@ -141,5 +123,9 @@ class POEBaseGroupAffixesTier
         $this->max = $max;
 
         return $this;
+    }
+    public function __toString()
+    {
+        return $this->getBaseGroupAffixes()->getPoeAffix()->getName() . ' - T' . $this->tier;
     }
 }

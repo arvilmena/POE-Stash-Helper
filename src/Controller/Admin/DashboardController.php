@@ -2,6 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\POEAffix;
+use App\Entity\POEBaseGroupAffixes;
+use App\Entity\POEBaseGroupAffixesTier;
+use App\Entity\POEItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -31,6 +35,9 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+        yield MenuItem::linkToCrud('Items', 'fas fa-list', POEItem::class);
+        yield MenuItem::linkToCrud('Affixes', 'fas fa-list', POEAffix::class);
+        yield MenuItem::linkToCrud('Base Affixes', 'fas fa-list', POEBaseGroupAffixes::class);
+        yield MenuItem::linkToCrud('Base Affix Tiers', 'fas fa-list', POEBaseGroupAffixesTier::class);
     }
 }

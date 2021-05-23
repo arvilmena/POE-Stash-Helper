@@ -36,6 +36,16 @@ class POEBaseGroupAffixes
      */
     private $poeBaseGroupAffixesTiers;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $prefixOrSuffix;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $affixGroupName;
+
     public function __construct()
     {
         $this->poeBaseGroupAffixesTiers = new ArrayCollection();
@@ -98,5 +108,33 @@ class POEBaseGroupAffixes
         }
 
         return $this;
+    }
+
+    public function getPrefixOrSuffix(): ?string
+    {
+        return $this->prefixOrSuffix;
+    }
+
+    public function setPrefixOrSuffix(?string $prefixOrSuffix): self
+    {
+        $this->prefixOrSuffix = $prefixOrSuffix;
+
+        return $this;
+    }
+
+    public function getAffixGroupName(): ?string
+    {
+        return $this->affixGroupName;
+    }
+
+    public function setAffixGroupName(?string $affixGroupName): self
+    {
+        $this->affixGroupName = $affixGroupName;
+
+        return $this;
+    }
+    public function __toString()
+    {
+        return $this->getPoeAffix()->getName();
     }
 }

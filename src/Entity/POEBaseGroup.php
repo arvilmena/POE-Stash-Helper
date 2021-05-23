@@ -34,10 +34,16 @@ class POEBaseGroup
      */
     private $poeAffixes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=POEBase::class, mappedBy="baseGroup")
+     */
+    private $poeBases;
+
     public function __construct()
     {
         $this->poeItems = new ArrayCollection();
         $this->poeAffixes = new ArrayCollection();
+        $this->poeBases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,7 +101,7 @@ class POEBaseGroup
         return $this->poeAffixes;
     }
 
-    public function addPoeAffix(POEBaseGroupAffixes $poeAffix): self
+    public function addPoeBaseGroupAffix(POEBaseGroupAffixes $poeAffix): self
     {
         if (!$this->poeAffixes->contains($poeAffix)) {
             $this->poeAffixes[] = $poeAffix;
@@ -105,12 +111,47 @@ class POEBaseGroup
         return $this;
     }
 
-    public function removePoeAffix(POEBaseGroupAffixes $poeAffix): self
+    public function removeBaseGroupPoeAffix(POEBaseGroupAffixes $poeAffix): self
     {
         if ($this->poeAffixes->removeElement($poeAffix)) {
             // set the owning side to null (unless already changed)
             if ($poeAffix->getBaseGroup() === $this) {
                 $poeAffix->setBaseGroup(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return Collection|POEBase[]
+     */
+    public function getPoeBases(): Collection
+    {
+        return $this->poeBases;
+    }
+
+    public function addPoeBasis(POEBase $poeBasis): self
+    {
+        if (!$this->poeBases->contains($poeBasis)) {
+            $this->poeBases[] = $poeBasis;
+            $poeBasis->setBaseGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoeBasis(POEBase $poeBasis): self
+    {
+        if ($this->poeBases->removeElement($poeBasis)) {
+            // set the owning side to null (unless already changed)
+            if ($poeBasis->getBaseGroup() === $this) {
+                $poeBasis->setBaseGroup(null);
             }
         }
 

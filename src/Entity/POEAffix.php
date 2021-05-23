@@ -20,11 +20,6 @@ class POEAffix
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $groupName;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -45,7 +40,7 @@ class POEAffix
     private $poeBaseGroupAffixes;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $regexPattern;
 
@@ -57,18 +52,6 @@ class POEAffix
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getGroupName(): ?string
-    {
-        return $this->groupName;
-    }
-
-    public function setGroupName(?string $groupName): self
-    {
-        $this->groupName = $groupName;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -147,5 +130,10 @@ class POEAffix
         $this->regexPattern = $regexPattern;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

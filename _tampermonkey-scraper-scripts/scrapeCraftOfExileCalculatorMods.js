@@ -14,20 +14,40 @@
 
     'use strict';
 
+    var $document = $(document);
+
     var Scrape = function() {
 
         // get base group
-        var baseGroup = $("#poecBase1Selector > div.choice.med_shadow").text();
+        var baseGroup = $document.find("#poecBase1Selector > div.choice.med_shadow").text();
 
         // get base
-        var base = $("#poecBase2Selector > div.choice.med_shadow").text();
+        var base = $document.find("#poecBase2Selector > div.choice.med_shadow").text();
 
         // prefixes
-        var $prefixesCol = $('div#poecPrefixesCol');
+        var $prefixesCol = $document.find('div#poecPrefixesCol');
 
         // suffixes
-        var $suffixesCol = $('div#poecSuffixesCol');
+        var $suffixesCol = $document.find('div#poecSuffixesCol');
 
+
+        var getItems = function() {
+
+            var get = function() {
+                var items = [];
+                $document.find("#poecBase3Selector > div.choices > .base:not(.none):visible").each(function(index, $item){
+                    items.push($($item).text());
+                });
+                return items;
+            }
+
+            var $itemSelector = $document.find('#poecBase3Selector');
+            if (!$itemSelector.hasClass('selecting')) {
+                $itemSelector.children('.choice[onclick]').click();
+            }
+
+            return get();
+        }
 
         var getColAffixGroups = function($col) {
             var $mgrps = $col.find('.agroup.mgrp');
@@ -35,29 +55,80 @@
 
             // groupName
             var getGroupName = function($mgrp) {
-                return $mgrp.find('& > .header > .label > div').text();
+                return $($mgrp).children('.header').children('.label').children('div').text();
+            }
+
+            var getAffixData = function($mainAffix, $mgrp) {
+                $mainAffix = $($mainAffix);
+                // console.log('$mainAffix', $mainAffix);
+
+                // tiers under this main affix.
+                var tiers = [];
+                $($mgrp).children('.affix[aid="'+ $mainAffix.attr('aid') +'"]:not(.main)').each(function(index, $tier){
+                    $tier = $($tier);
+                    tiers.push({
+                        name: $tier.children('.label').children('div').text(),
+                        tier: $tier.children('.right:nth-child(2)').children('div').text(),
+                        ilvl: $tier.children('.right:nth-child(3)').children('div').text(),
+                    });
+                });
+
+                var getName = function() {
+                    $mainAffix = $($mainAffix);
+                    return $mainAffix.children('.label').children('div').contents().filter(function() {
+                        return this.nodeType == Node.TEXT_NODE;
+                    }).text();
+
+                    if ($mainAffix.children('.mvico:first-child').length) {
+                        return $mainAffix.children('.label').children('div').contents().get(1).nodeValue;
+                    } else {
+                        return $mainAffix.children('.label').children('div').contents().get(0).nodeValue;
+                    }
+                }
+
+                return {
+                    name: getName($mainAffix),
+                    coeAffixID: $mainAffix.attr('aid'),
+                    aModGrp: $mainAffix.attr('amodgrp'),
+                    // numberOfTiers: $mainAffix.attr('untier'),
+                    tiers: tiers
+                }
+
             }
 
             var getAffixes = function($mgrp) {
-                return [];
+                var $mainAffixes = $($mgrp).children('.affix.main');
+
+                var affixesData = [];
+                $mainAffixes.each(function(index, $mainAffix){
+                    affixesData.push(getAffixData($mainAffix, $mgrp));
+                });
+                return affixesData;
             }
 
-            $mgrps.forEach(function($mgrp) {
+            // loop through each affix group
+            // groups are Base affixes, Influences affixes, Veiled affixes, Essense affixes, etc.
+            var groups = [];
 
-                return {
+            $mgrps.each(function(index, $mgrp) {
+                groups.push({
                     groupName: getGroupName($mgrp),
                     affixes: getAffixes($mgrp)
-                }
+                });
 
             });
+            return groups;
         };
 
         return {
-            run: function() {
-                console.log('baseGroup', baseGroup);
-                console.log('base', base);
-                console.log('$prefixesCol', $prefixesCol);
-                console.log('$suffixesCol', $suffixesCol);
+            scrape: function() {
+                return {
+                    baseGroup: baseGroup,
+                    base: base,
+                    items: getItems(),
+                    prefixes: getColAffixGroups($prefixesCol),
+                    suffixes: getColAffixGroups($suffixesCol),
+                }
             }
         }
     }
@@ -74,7 +145,8 @@
         $("body").append(r);
 
         r.click(function() {
-            Scrape().run();
+            var data = Scrape().scrape();
+            console.log('data', data);
         });
     }
 
