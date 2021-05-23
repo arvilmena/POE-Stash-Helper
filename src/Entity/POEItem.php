@@ -23,7 +23,7 @@ class POEItem
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=POEBaseGroup::class, inversedBy="poeItems")
+     * @ORM\ManyToOne(targetEntity=POEBase::class, inversedBy="poeItems")
      */
     private $baseGroup;
 
@@ -44,12 +44,12 @@ class POEItem
         return $this;
     }
 
-    public function getBaseGroup(): ?POEBaseGroup
+    public function getBaseGroup(): ?POEBase
     {
         return $this->baseGroup;
     }
 
-    public function setBaseGroup(?POEBaseGroup $baseGroup): self
+    public function setBaseGroup(?POEBase $baseGroup): self
     {
         $this->baseGroup = $baseGroup;
 

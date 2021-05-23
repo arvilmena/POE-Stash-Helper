@@ -2,17 +2,17 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\POEBaseGroupAffixesTier;
+use App\Entity\POEBaseAffixesTier;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class POEBaseGroupAffixesTierCrudController extends AbstractCrudController
+class POEBaseAffixesTierCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return POEBaseGroupAffixesTier::class;
+        return POEBaseAffixesTier::class;
     }
 
     public function configureFields(string $pageName): iterable

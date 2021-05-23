@@ -3,8 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\POEAffix;
-use App\Entity\POEBaseGroupAffixes;
-use App\Entity\POEBaseGroupAffixesTier;
+use App\Entity\POEBaseAffixes;
+use App\Entity\POEBaseAffixesTier;
 use App\Entity\POEItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -23,7 +23,7 @@ class DashboardController extends AbstractDashboardController
         // redirect to some CRUD controller
         $routeBuilder = $this->get(AdminUrlGenerator::class);
 
-        return $this->redirect($routeBuilder->setController(POEBaseGroupCrudController::class)->generateUrl());
+        return $this->redirect($routeBuilder->setController(POEBaseCrudController::class)->generateUrl());
     }
 
     public function configureDashboard(): Dashboard
@@ -34,10 +34,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linktoDashboard('Bases', 'fa fa-home');
         yield MenuItem::linkToCrud('Items', 'fas fa-list', POEItem::class);
         yield MenuItem::linkToCrud('Affixes', 'fas fa-list', POEAffix::class);
-        yield MenuItem::linkToCrud('Base Affixes', 'fas fa-list', POEBaseGroupAffixes::class);
-        yield MenuItem::linkToCrud('Base Affix Tiers', 'fas fa-list', POEBaseGroupAffixesTier::class);
+        yield MenuItem::linkToCrud('Base Affixes', 'fas fa-list', POEBaseAffixes::class);
+        yield MenuItem::linkToCrud('Base Affix Tiers', 'fas fa-list', POEBaseAffixesTier::class);
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\POEBaseGroup;
+use App\Entity\POEBase;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
-class POEBaseGroupCrudController extends AbstractCrudController
+class POEBaseCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return POEBaseGroup::class;
+        return POEBase::class;
     }
 
     /*

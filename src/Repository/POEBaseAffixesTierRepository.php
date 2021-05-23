@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\POEBaseGroup;
+use App\Entity\POEBaseAffixesTier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method POEBaseGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method POEBaseGroup|null findOneBy(array $criteria, array $orderBy = null)
- * @method POEBaseGroup[]    findAll()
- * @method POEBaseGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method POEBaseAffixesTier|null find($id, $lockMode = null, $lockVersion = null)
+ * @method POEBaseAffixesTier|null findOneBy(array $criteria, array $orderBy = null)
+ * @method POEBaseAffixesTier[]    findAll()
+ * @method POEBaseAffixesTier[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class POEBaseGroupRepository extends ServiceEntityRepository
+class POEBaseAffixesTierRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, POEBaseGroup::class);
+        parent::__construct($registry, POEBaseAffixesTier::class);
     }
 
     // /**
-    //  * @return POEBaseGroup[] Returns an array of POEBaseGroup objects
+    //  * @return POEBaseAffixesTier[] Returns an array of POEBaseAffixesTier objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class POEBaseGroupRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?POEBaseGroup
+    public function findOneBySomeField($value): ?POEBaseAffixesTier
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.exampleField = :val')

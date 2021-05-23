@@ -2,15 +2,15 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\POEBaseGroupAffixes;
+use App\Entity\POEBaseAffixes;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
-class POEBaseGroupAffixesCrudController extends AbstractCrudController
+class POEBaseAffixesCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return POEBaseGroupAffixes::class;
+        return POEBaseAffixes::class;
     }
 
     public function configureFields(string $pageName): iterable

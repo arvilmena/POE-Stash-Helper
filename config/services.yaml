@@ -35,3 +35,8 @@ services:
             $POESESSID: '%env(string:POESESSID)%'
             $accountName: 'ZiriusPH'
             $league: 'SSF Ultimatum'
+
+    App\Service\AppConfigurationService:
+        autowire: true
+        arguments:
+            $projectDir: '%kernel.project_dir%'

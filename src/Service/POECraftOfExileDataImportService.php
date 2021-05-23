@@ -19,14 +19,14 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\POEAffix;
-use App\Entity\POEBaseGroup;
-use App\Entity\POEBaseGroupAffixes;
-use App\Entity\POEBaseGroupAffixesTier;
+use App\Entity\POEBase;
+use App\Entity\POEBaseAffixes;
+use App\Entity\POEBaseAffixesTier;
 use App\Entity\POEItem;
 use App\Repository\POEAffixRepository;
-use App\Repository\POEBaseGroupAffixesRepository;
-use App\Repository\POEBaseGroupAffixesTierRepository;
-use App\Repository\POEBaseGroupRepository;
+use App\Repository\POEBaseAffixesRepository;
+use App\Repository\POEBaseAffixesTierRepository;
+use App\Repository\POEBaseRepository;
 use App\Repository\POEItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -44,9 +44,9 @@ class POECraftOfExileDataImportService
      */
     private $em;
     /**
-     * @var POEBaseGroupRepository
+     * @var POEBaseRepository
      */
-    private $baseGroupRepository;
+    private $baseRepository;
     /**
      * @var POEItemRepository
      */
@@ -56,27 +56,27 @@ class POECraftOfExileDataImportService
      */
     private $affixRepository;
     /**
-     * @var POEBaseGroupAffixesRepository
+     * @var POEBaseAffixesRepository
      */
-    private $baseGroupAffixesRepository;
+    private $baseAffixesRepository;
     /**
-     * @var POEBaseGroupAffixesTierRepository
+     * @var POEBaseAffixesTierRepository
      */
-    private $baseGroupAffixesTierRepository;
+    private $baseAffixesTierRepository;
 
     public function __construct(EntityManagerInterface $em,
-                                POEBaseGroupRepository $baseGroupRepository,
+                                POEBaseRepository $baseRepository,
                                 POEItemRepository $itemRepository,
                                 POEAffixRepository $affixRepository,
-                                POEBaseGroupAffixesRepository $baseGroupAffixesRepository,
-                                POEBaseGroupAffixesTierRepository $baseGroupAffixesTierRepository)
+                                POEBaseAffixesRepository $baseAffixesRepository,
+                                POEBaseAffixesTierRepository $baseAffixesTierRepository)
     {
         $this->em = $em;
-        $this->baseGroupRepository = $baseGroupRepository;
+        $this->baseRepository = $baseRepository;
         $this->itemRepository = $itemRepository;
         $this->affixRepository = $affixRepository;
-        $this->baseGroupAffixesRepository = $baseGroupAffixesRepository;
-        $this->baseGroupAffixesTierRepository = $baseGroupAffixesTierRepository;
+        $this->baseAffixesRepository = $baseAffixesRepository;
+        $this->baseAffixesTierRepository = $baseAffixesTierRepository;
     }
 
     public function importData(array $data)
@@ -84,15 +84,13 @@ class POECraftOfExileDataImportService
         // @see craftofexile-scrape-example.json
         // for structure of $data
 
-        var_dump($data);
+        $base = trim($data['base']);
 
-        $baseGroup = trim($data['baseGroup']);
-
-        $baseGroupEntity = $this->baseGroupRepository->findOneBy(['name' => $baseGroup]);
-        if(!($baseGroupEntity instanceof POEBaseGroup)) {
-            $baseGroupEntity = new POEBaseGroup();
-            $baseGroupEntity->setName($baseGroup);
-            $this->em->persist($baseGroupEntity);
+        $baseEntity = $this->baseRepository->findOneBy(['name' => $base]);
+        if(!($baseEntity instanceof POEBase)) {
+            $baseEntity = new POEBase();
+            $baseEntity->setName($base);
+            $this->em->persist($baseEntity);
             $this->em->flush();
         }
 
@@ -105,20 +103,21 @@ class POECraftOfExileDataImportService
                     echo '> not found, creating ...' . PHP_EOL;
                     $itemEntity = new POEItem();
                     $itemEntity->setName($item);
-                    $itemEntity->setBaseGroup($baseGroupEntity);
+                    $itemEntity->setBaseGroup($baseEntity);
                     $this->em->persist($itemEntity);
                     $this->em->flush();
                 }
             }
         }
 
-        $this->importAffixes($baseGroupEntity, $data['prefixes'], 'prefix');
-        $this->importAffixes($baseGroupEntity, $data['suffixes'], 'suffix');
+        $this->importAffixes($baseEntity, $data['prefixes'], 'prefix');
+        $this->importAffixes($baseEntity, $data['suffixes'], 'suffix');
 
         $this->em->flush();
+        $this->em->clear();
     }
 
-    public function importAffixes(POEBaseGroup $baseGroupEntity,array $modGroups, $prefixOrSuffix = null)
+    public function importAffixes(POEBase $baseEntity, array $modGroups, $prefixOrSuffix = null)
     {
         foreach($modGroups as $modGroup) {
             foreach ($modGroup['affixes'] as $affix) {
@@ -135,26 +134,26 @@ class POECraftOfExileDataImportService
                 $this->em->persist($affixEntity);
                 $this->em->flush();
 
-                $baseGroupAffixAssocEntity = $this->baseGroupAffixesRepository->findOneBy(['baseGroup' => $baseGroupEntity, 'poeAffix' => $affixEntity, 'prefixOrSuffix'=>$prefixOrSuffix, 'affixGroupName'=>$modGroup['groupName']]);
-                if ( !($baseGroupAffixAssocEntity instanceof POEBaseGroupAffixes)) {
-                    $baseGroupAffixAssocEntity = new POEBaseGroupAffixes();
-                    $baseGroupAffixAssocEntity->setBaseGroup($baseGroupEntity);
-                    $baseGroupAffixAssocEntity->setPoeAffix($affixEntity);
-                    $baseGroupAffixAssocEntity->setPrefixOrSuffix($prefixOrSuffix);
-                    $baseGroupAffixAssocEntity->setAffixGroupName($modGroup['groupName']);
-                    $this->em->persist($baseGroupAffixAssocEntity);
+                $baseAffixesEntity = $this->baseAffixesRepository->findOneBy(['base' => $baseEntity, 'poeAffix' => $affixEntity, 'prefixOrSuffix'=>$prefixOrSuffix, 'affixGroupName'=>$modGroup['groupName']]);
+                if ( !($baseAffixesEntity instanceof POEBaseAffixes)) {
+                    $baseAffixesEntity = new POEBaseAffixes();
+                    $baseAffixesEntity->setBaseGroup($baseEntity);
+                    $baseAffixesEntity->setPoeAffix($affixEntity);
+                    $baseAffixesEntity->setPrefixOrSuffix($prefixOrSuffix);
+                    $baseAffixesEntity->setAffixGroupName($modGroup['groupName']);
+                    $this->em->persist($baseAffixesEntity);
                     $this->em->flush();
-//                            $baseGroupEntity->addPoeBaseGroupAffix($baseGroupAffixAssocEntity);
-//                            $this->em->persist($baseGroupEntity);
+//                            $baseEntity->addPOEBaseAffix($baseAffixesEntity);
+//                            $this->em->persist($baseEntity);
                 }
 
                 // tiers under this affix
                 if (!empty($affix['tiers'])) {
                     foreach ($affix['tiers'] as $tier) {
-                        $tierEntity = $this->baseGroupAffixesTierRepository->findOneBy(['baseGroupAffixes' => $baseGroupAffixAssocEntity, 'tier' => (int) $tier['tier']]);
-                        if (!($tierEntity instanceof POEBaseGroupAffixesTier)) {
-                            $tierEntity = new POEBaseGroupAffixesTier();
-                            $tierEntity->setBaseGroupAffixes($baseGroupAffixAssocEntity);
+                        $tierEntity = $this->baseAffixesTierRepository->findOneBy(['baseAffixes' => $baseAffixesEntity, 'tier' => (int) $tier['tier']]);
+                        if (!($tierEntity instanceof POEBaseAffixesTier)) {
+                            $tierEntity = new POEBaseAffixesTier();
+                            $tierEntity->setBaseAffixes($baseAffixesEntity);
                             $tierEntity->setTier((int)$tier['tier']);
                         }
                         $tierEntity->setName($tier['name']);
@@ -162,6 +161,7 @@ class POECraftOfExileDataImportService
                         $this->em->persist($tierEntity);
                         $this->em->flush();
                     }
+                    $this->em->clear();
                 }
             }
         }

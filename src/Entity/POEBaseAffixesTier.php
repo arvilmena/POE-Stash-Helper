@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\POEBaseGroupAffixesTierRepository;
+use App\Repository\POEBaseAffixesTierRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=POEBaseGroupAffixesTierRepository::class)
+ * @ORM\Entity(repositoryClass=POEBaseAffixesTierRepository::class)
  */
-class POEBaseGroupAffixesTier
+class POEBaseAffixesTier
 {
     /**
      * @ORM\Id
@@ -18,10 +18,10 @@ class POEBaseGroupAffixesTier
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=POEBaseGroupAffixes::class, inversedBy="poeBaseGroupAffixesTiers")
+     * @ORM\ManyToOne(targetEntity=POEBaseAffixes::class, inversedBy="POEBaseAffixesTiers")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $baseGroupAffixes;
+    private $baseAffixes;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -48,19 +48,24 @@ class POEBaseGroupAffixesTier
      */
     private $max;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $regexPattern;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getBaseGroupAffixes(): ?POEBaseGroupAffixes
+    public function getBaseAffixes(): ?POEBaseAffixes
     {
-        return $this->baseGroupAffixes;
+        return $this->baseAffixes;
     }
 
-    public function setBaseGroupAffixes(?POEBaseGroupAffixes $baseGroupAffixes): self
+    public function setBaseAffixes(?POEBaseAffixes $baseAffixes): self
     {
-        $this->baseGroupAffixes = $baseGroupAffixes;
+        $this->baseAffixes = $baseAffixes;
 
         return $this;
     }
@@ -126,6 +131,18 @@ class POEBaseGroupAffixesTier
     }
     public function __toString()
     {
-        return $this->getBaseGroupAffixes()->getPoeAffix()->getName() . ' - T' . $this->tier;
+        return $this->getBaseAffixes()->getPoeAffix()->getName() . ' - T' . $this->tier;
+    }
+
+    public function getRegexPattern(): ?string
+    {
+        return $this->regexPattern;
+    }
+
+    public function setRegexPattern(?string $regexPattern): self
+    {
+        $this->regexPattern = $regexPattern;
+
+        return $this;
     }
 }

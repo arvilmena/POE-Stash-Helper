@@ -35,9 +35,9 @@ class POEAffix
     private $coeAffixID;
 
     /**
-     * @ORM\OneToMany(targetEntity=POEBaseGroupAffixes::class, mappedBy="poeAffix", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=POEBaseAffixes::class, mappedBy="poeAffix", orphanRemoval=true)
      */
-    private $poeBaseGroupAffixes;
+    private $POEBaseAffixes;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -46,7 +46,7 @@ class POEAffix
 
     public function __construct()
     {
-        $this->poeBaseGroupAffixes = new ArrayCollection();
+        $this->POEBaseAffixes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,29 +91,29 @@ class POEAffix
     }
 
     /**
-     * @return Collection|POEBaseGroupAffixes[]
+     * @return Collection|POEBaseAffixes[]
      */
-    public function getPoeBaseGroupAffixes(): Collection
+    public function getPOEBaseAffixes(): Collection
     {
-        return $this->poeBaseGroupAffixes;
+        return $this->POEBaseAffixes;
     }
 
-    public function addPoeBaseGroupAffix(POEBaseGroupAffixes $poeBaseGroupAffix): self
+    public function addPOEBaseAffix(POEBaseAffixes $POEBaseAffix): self
     {
-        if (!$this->poeBaseGroupAffixes->contains($poeBaseGroupAffix)) {
-            $this->poeBaseGroupAffixes[] = $poeBaseGroupAffix;
-            $poeBaseGroupAffix->setPoeAffix($this);
+        if (!$this->POEBaseAffixes->contains($POEBaseAffix)) {
+            $this->POEBaseAffixes[] = $POEBaseAffix;
+            $POEBaseAffix->setPoeAffix($this);
         }
 
         return $this;
     }
 
-    public function removePoeBaseGroupAffix(POEBaseGroupAffixes $poeBaseGroupAffix): self
+    public function removePOEBaseAffix(POEBaseAffixes $POEBaseAffix): self
     {
-        if ($this->poeBaseGroupAffixes->removeElement($poeBaseGroupAffix)) {
+        if ($this->POEBaseAffixes->removeElement($POEBaseAffix)) {
             // set the owning side to null (unless already changed)
-            if ($poeBaseGroupAffix->getPoeAffix() === $this) {
-                $poeBaseGroupAffix->setPoeAffix(null);
+            if ($POEBaseAffix->getPoeAffix() === $this) {
+                $POEBaseAffix->setPoeAffix(null);
             }
         }
 

@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\POEBaseGroupAffixesRepository;
+use App\Repository\POEBaseAffixesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=POEBaseGroupAffixesRepository::class)
+ * @ORM\Entity(repositoryClass=POEBaseAffixesRepository::class)
  */
-class POEBaseGroupAffixes
+class POEBaseAffixes
 {
     /**
      * @ORM\Id
@@ -20,21 +20,21 @@ class POEBaseGroupAffixes
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=POEBaseGroup::class, inversedBy="poeAffixes")
+     * @ORM\ManyToOne(targetEntity=POEBase::class, inversedBy="poeAffixes")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $baseGroup;
+    private $base;
 
     /**
-     * @ORM\ManyToOne(targetEntity=POEAffix::class, inversedBy="poeBaseGroupAffixes")
+     * @ORM\ManyToOne(targetEntity=POEAffix::class, inversedBy="POEBaseAffixes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $poeAffix;
 
     /**
-     * @ORM\OneToMany(targetEntity=POEBaseGroupAffixesTier::class, mappedBy="baseGroupAffixes", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=POEBaseAffixesTier::class, mappedBy="baseAffixes", orphanRemoval=true)
      */
-    private $poeBaseGroupAffixesTiers;
+    private $POEBaseAffixesTiers;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -48,7 +48,7 @@ class POEBaseGroupAffixes
 
     public function __construct()
     {
-        $this->poeBaseGroupAffixesTiers = new ArrayCollection();
+        $this->POEBaseAffixesTiers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,14 +56,14 @@ class POEBaseGroupAffixes
         return $this->id;
     }
 
-    public function getBaseGroup(): ?POEBaseGroup
+    public function getBaseGroup(): ?POEBase
     {
-        return $this->baseGroup;
+        return $this->base;
     }
 
-    public function setBaseGroup(?POEBaseGroup $baseGroup): self
+    public function setBaseGroup(?POEBase $base): self
     {
-        $this->baseGroup = $baseGroup;
+        $this->base = $base;
 
         return $this;
     }
@@ -81,29 +81,29 @@ class POEBaseGroupAffixes
     }
 
     /**
-     * @return Collection|POEBaseGroupAffixesTier[]
+     * @return Collection|POEBaseAffixesTier[]
      */
-    public function getPoeBaseGroupAffixesTiers(): Collection
+    public function getPOEBaseAffixesTiers(): Collection
     {
-        return $this->poeBaseGroupAffixesTiers;
+        return $this->POEBaseAffixesTiers;
     }
 
-    public function addPoeBaseGroupAffixesTier(POEBaseGroupAffixesTier $poeBaseGroupAffixesTier): self
+    public function addPOEBaseAffixesTier(POEBaseAffixesTier $POEBaseAffixesTier): self
     {
-        if (!$this->poeBaseGroupAffixesTiers->contains($poeBaseGroupAffixesTier)) {
-            $this->poeBaseGroupAffixesTiers[] = $poeBaseGroupAffixesTier;
-            $poeBaseGroupAffixesTier->setBaseGroupAffixes($this);
+        if (!$this->POEBaseAffixesTiers->contains($POEBaseAffixesTier)) {
+            $this->POEBaseAffixesTiers[] = $POEBaseAffixesTier;
+            $POEBaseAffixesTier->setBaseGroupAffixes($this);
         }
 
         return $this;
     }
 
-    public function removePoeBaseGroupAffixesTier(POEBaseGroupAffixesTier $poeBaseGroupAffixesTier): self
+    public function removePOEBaseAffixesTier(POEBaseAffixesTier $POEBaseAffixesTier): self
     {
-        if ($this->poeBaseGroupAffixesTiers->removeElement($poeBaseGroupAffixesTier)) {
+        if ($this->POEBaseAffixesTiers->removeElement($POEBaseAffixesTier)) {
             // set the owning side to null (unless already changed)
-            if ($poeBaseGroupAffixesTier->getBaseGroupAffixes() === $this) {
-                $poeBaseGroupAffixesTier->setBaseGroupAffixes(null);
+            if ($POEBaseAffixesTier->getBaseGroupAffixes() === $this) {
+                $POEBaseAffixesTier->setBaseGroupAffixes(null);
             }
         }
 

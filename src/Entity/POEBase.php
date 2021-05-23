@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\POEBaseGroupRepository;
+use App\Repository\POEBaseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=POEBaseGroupRepository::class)
+ * @ORM\Entity(repositoryClass=POEBaseRepository::class)
  */
-class POEBaseGroup
+class POEBase
 {
     /**
      * @ORM\Id
@@ -30,7 +30,7 @@ class POEBaseGroup
     private $poeItems;
 
     /**
-     * @ORM\OneToMany(targetEntity=POEBaseGroupAffixes::class, mappedBy="baseGroup", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=POEBaseAffixes::class, mappedBy="baseGroup", orphanRemoval=true)
      */
     private $poeAffixes;
 
@@ -94,14 +94,14 @@ class POEBaseGroup
     }
 
     /**
-     * @return Collection|POEBaseGroupAffixes[]
+     * @return Collection|POEBaseAffixes[]
      */
     public function getPoeAffixes(): Collection
     {
         return $this->poeAffixes;
     }
 
-    public function addPoeBaseGroupAffix(POEBaseGroupAffixes $poeAffix): self
+    public function addPOEBaseAffix(POEBaseAffixes $poeAffix): self
     {
         if (!$this->poeAffixes->contains($poeAffix)) {
             $this->poeAffixes[] = $poeAffix;
@@ -111,7 +111,7 @@ class POEBaseGroup
         return $this;
     }
 
-    public function removeBaseGroupPoeAffix(POEBaseGroupAffixes $poeAffix): self
+    public function removeBaseGroupPoeAffix(POEBaseAffixes $poeAffix): self
     {
         if ($this->poeAffixes->removeElement($poeAffix)) {
             // set the owning side to null (unless already changed)
