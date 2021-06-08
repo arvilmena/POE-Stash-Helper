@@ -15,7 +15,8 @@ class POEItemModValueExtractorService {
     const FIRE_AND_COLD_RESIST_PATTERN = '/(\+(\d+)\% to Fire and Cold Resistances)/';
     const FIRE_AND_LIGHTNING_RESIST_PATTERN = '/(\+(\d+)\% to Fire and Lightning Resistances)/';
     const MAX_FLAT_LIFE_PATTERN = '/(\+(\d+) to maximum Life)/';
-    const PERCENT_INC_LIFE_PATTERN = '/((\d+)\% increased maximum Life)/';
+    const PERCENT_INC_LIFE_PATTERN = '/^((\d+)\% increased maximum Life)/';
+    const PERCENT_INC_MANA_PATTERN = '/((\d+)\% increased maximum Mana)/';
     const MANA_REGENERATION_PATTERN = '/((\d+)\% increased Mana Regeneration Rate)/';
     const MOVEMENT_SPEED_PATTERN = '/((\d+)\% increased Movement Speed)/';
     const FLASK_EFFECT_DURATION_PATTERN = '/((\d+)\% increased Flask Effect Duration)/';
@@ -23,8 +24,91 @@ class POEItemModValueExtractorService {
     const FLASK_CHARGES_USED_PATTERN = '/((\d+)\% reduced Flask Charges used)/';
     const FLAT_ENERGY_SHIELD_PATTERN = '/(\+(\d+) to maximum Energy Shield)/';
     const FLAT_MANA_PATTERN = '/(\+(\d+) to maximum Mana)/';
-    const FLAT_EVASION_PATTERN = '/(\+(\d+) to maximum Mana)/';
+    const FLAT_EVASION_PATTERN = '/(\+(\d+) to Evasion Rating)/';
     const INCREASED_ELEMENTAL_DAMAGE_PATTERN = '/((\d+)\% increased Elemental Damage with Attack Skills)/';
+    const CORRUPTED_BLOOD_IMMUNITY = '/Corrupted Blood cannot be inflicted on you/';
+    const SILENCE_IMMUNITY = '/You cannot be Cursed with Silence/';
+    const HINDER_IMMUNITY = '/You cannot be Hindered/';
+
+    public static function isHinderImmune(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => false,
+            'explicitMods' => false,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::HINDER_IMMUNITY, $mod, $matches);
+                if (!empty($matches)) {
+                    $tally[$key] = true;
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function isSilenceImmune(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => false,
+            'explicitMods' => false,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::SILENCE_IMMUNITY, $mod, $matches);
+                if (!empty($matches)) {
+                    $tally[$key] = true;
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function isCorruptedBloodImmune(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => false,
+            'explicitMods' => false,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::CORRUPTED_BLOOD_IMMUNITY, $mod, $matches);
+                if (!empty($matches)) {
+                    $tally[$key] = true;
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getPercentIncreasedMana(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PERCENT_INC_MANA_PATTERN, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
 
     public static function getTotalFlatEvasion(array $item) : array
     {
@@ -390,6 +474,10 @@ class POEItemModValueExtractorService {
                 'flatES' => self::getTotalFlatEnergyShield($item)[$modType],
                 'flatEvasion' => self::getTotalFlatEvasion($item)[$modType],
                 'increasedElementalDamageWithAtk' => self::getTotalIncreasedElementalDamage($item)[$modType],
+                'percentMana' => self::getPercentIncreasedMana($item)[$modType],
+                'isCorruptedBloodImmune' => self::isCorruptedBloodImmune($item)[$modType],
+                'isSilenceImmune' => self::isSilenceImmune($item)[$modType],
+                'isHinderImmune' => self::isHinderImmune($item)[$modType],
             ];
         }
         return $result;

@@ -33,11 +33,27 @@
                             <tr>
                                 <td><img src="{{ item.item.icon }}" alt="{{ item.name }}"></td>
                                 <td>
+                                    {% if ('implicitMods' in item.item|keys) and (item.item.implicitMods|length) %}
+                                        <ul>
+                                            {% for m in item.item.implicitMods  %}
+                                                <li>{{ m }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <hr />
+                                    {% endif %}
                                     <ul>
                                         {% for m in item.item.explicitMods  %}
                                             <li>{{ m }}</li>
                                         {% endfor %}
                                     </ul>
+                                    {% if ('ilvl' in item.item|keys) %}
+                                        <hr />
+                                        ilvl: {{ item.item.ilvl }}
+                                    {% endif %}
+                                    {% if ('influences' in item.item|keys) %}
+                                        <hr />
+                                        Influences: {{ item.item.influences|keys|join(',')|title }}
+                                    {% endif %}
                                 </td>
                                 <td>{{ stashName }}</td>
                                 <td>{{ item.points }}</td>

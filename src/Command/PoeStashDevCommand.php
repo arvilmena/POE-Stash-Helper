@@ -70,7 +70,7 @@ class PoeStashDevCommand extends Command
            return (1 === preg_match('/^D(\d+)$/', $stash['n']));
         }));
 
-//        $stashes = [ $stashes[0] ];
+        $stashes = [ $stashes[0] ];
 
         $goodGears = [];
         $highestPoint = [

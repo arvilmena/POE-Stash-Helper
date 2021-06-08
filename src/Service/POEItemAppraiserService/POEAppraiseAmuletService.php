@@ -5,6 +5,7 @@ namespace App\Service\POEItemAppraiserService;
 
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
+use App\Util\StringUtil;
 
 class POEAppraiseAmuletService {
 
@@ -112,6 +113,19 @@ class POEAppraiseAmuletService {
         if ( $tally['explicitMods']['increasedElementalDamageWithAtk'] >= 43 ) {
             $points++;
             $points++;
+        }
+
+        if (
+            StringUtil::endsWith($item['baseType'], 'Amulet')
+            && (!empty($item['influences']))
+            && (intval($item['ilvl']) >= 82)
+            &&  (
+                ! StringUtil::endsWith($item['baseType'], 'Coral Amulet')
+                && ! StringUtil::endsWith($item['baseType'], 'Paua Amulet')
+                && ! StringUtil::endsWith($item['baseType'], 'Gold Amulet')
+            )
+        ) {
+            $points = $points + 7;
         }
 
         return [

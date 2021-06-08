@@ -23,6 +23,7 @@ use App\Service\POEItemAppraiserService\POEAppraiseBeltService;
 use App\Service\POEItemAppraiserService\POEAppraiseBootsService;
 use App\Service\POEItemAppraiserService\POEAppraiseGlovesService;
 use App\Service\POEItemAppraiserService\POEAppraiseHelmetService;
+use App\Service\POEItemAppraiserService\POEAppraiseJewelService;
 use App\Util\StringUtil;
 
 /**
@@ -69,6 +70,7 @@ class POEStashHelper
             'boots' => 0,
             'belts' => 0,
             'helmets' => 0,
+            'jewels' => 0,
         ];
 
         $items = [];
@@ -157,6 +159,21 @@ class POEStashHelper
                             $highestPoint['ring'] = $points;
                         }
                         if ($points >= 7) {
+                            $goodGears[$stash['n']][] = [
+                                'points' => $points,
+                                'name' => $item['name'] . ' ' . $item['baseType'],
+                                'stashName' => $stash['n'],
+                                'item' => $item
+                            ];
+                        }
+                    } elseif ( StringUtil::endsWith($item['baseType'], ' Jewel') ) {
+                        // ring
+                        $appraisal = POEAppraiseJewelService::appraise($item);
+                        $points = $appraisal['points'];
+                        if ($points > $highestPoint['jewels']) {
+                            $highestPoint['jewels'] = $points;
+                        }
+                        if ($points >= 2) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
