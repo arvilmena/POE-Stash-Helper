@@ -5,11 +5,28 @@ namespace App\Service\POEItemAppraiserService;
 
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
+use App\Value\POEAppraisalPassingScore;
+use App\Value\POEHelmets;
 
 class POEAppraiseHelmetService {
 
+    /**
+     * @var POEHelmets
+     */
+    private $poeHelmets;
+    /**
+     * @var POEAppraisalPassingScore
+     */
+    private $passingScore;
 
-    public static function appraise($item) {
+    public function __construct(POEHelmets $helmets, POEAppraisalPassingScore $passingScore)
+    {
+        $this->poeHelmets = $helmets;
+        $this->passingScore = $passingScore;
+    }
+
+
+    public function appraise($item) {
 
         $points = 0;
 
@@ -123,6 +140,18 @@ class POEAppraiseHelmetService {
         }
         if ( $tally['explicitMods']['flatEvasion'] >= 61 ) {
             $points++;
+        }
+
+        if ( !empty($item['influences']) ) {
+
+            // if tier 1
+            if ( in_array($item['baseType'], $this->poeHelmets->getAllTier1()) ) {
+                $points = $points + $this->passingScore::HELMET_PASSING_SCORE;
+                if (intval($item['ilvl']) >= 80) {
+                    $points = $points + (intval($item['ilvl']) - 80);
+                }
+            }
+
         }
 
         return [

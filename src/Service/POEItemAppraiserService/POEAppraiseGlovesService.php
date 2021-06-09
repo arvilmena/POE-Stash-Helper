@@ -5,10 +5,27 @@ namespace App\Service\POEItemAppraiserService;
 
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
+use App\Value\POEAppraisalPassingScore;
+use App\Value\POEGloves;
 
 class POEAppraiseGlovesService {
 
-    public static function appraise($item) {
+    /**
+     * @var POEGloves
+     */
+    private $poeGloves;
+    /**
+     * @var POEAppraisalPassingScore
+     */
+    private $passingScore;
+
+    public function __construct(POEGloves $poeGloves, POEAppraisalPassingScore $passingScore) {
+        $this->poeGloves = $poeGloves;
+        $this->passingScore = $passingScore;
+    }
+
+    public function appraise($item): array
+    {
 
         $points = 0;
 
@@ -113,6 +130,18 @@ class POEAppraiseGlovesService {
         }
         if ( $tally['explicitMods']['flatEvasion'] >= 61 ) {
             $points++;
+        }
+
+        if ( !empty($item['influences']) ) {
+
+            // if tier 1
+            if ( in_array($item['baseType'], $this->poeGloves->getAllTier1()) ) {
+                $points = $points + $this->passingScore::GLOVES_PASSING_SCORE;
+                if (intval($item['ilvl']) >= 80) {
+                    $points = $points + (intval($item['ilvl']) - 80);
+                }
+            }
+
         }
 
         return [

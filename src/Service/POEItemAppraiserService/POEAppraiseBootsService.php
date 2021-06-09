@@ -5,10 +5,26 @@ namespace App\Service\POEItemAppraiserService;
 
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
+use App\Value\POEAppraisalPassingScore;
+use App\Value\POEBodyArmours;
+use App\Value\POEBoots;
 
 class POEAppraiseBootsService {
+    /**
+     * @var POEAppraisalPassingScore
+     */
+    private $passingScore;
+    /**
+     * @var POEBoots
+     */
+    private $poeBoots;
 
-    public static function appraise($item) {
+    public function __construct(POEBoots $poeBoots, POEAppraisalPassingScore $passingScore) {
+        $this->passingScore = $passingScore;
+        $this->poeBoots = $poeBoots;
+    }
+
+    public function appraise($item) {
 
         $points = 0;
 
@@ -102,6 +118,16 @@ class POEAppraiseBootsService {
         }
         if ( $tally['explicitMods']['movementSpeed'] >= 35 ) {
             $points++;
+        }
+
+        if ( !empty($item['influences']) ) {
+            // if tier 1
+            if ( in_array($item['baseType'], $this->poeBoots->getAllTier1()) ) {
+                $points = $points + $this->passingScore::BOOTS_PASSING_SCORE;
+                if (intval($item['ilvl']) >= 80) {
+                    $points = $points + (intval($item['ilvl']) - 80);
+                }
+            }
         }
 
         return [

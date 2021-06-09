@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-{#    <pre>#}
-{#    {{ dump(goodGears) }}#}
-{#    </pre>#}
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         {% for stashName, items in goodGears %}
@@ -18,7 +15,7 @@
             {% set id = 'index-' ~ loop.index %}
             <div class="tab-pane fade {{ (loop.index == 1) ? 'show active' : '' }}" id="{{ id }}-tab" role="tabpanel" aria-labelledby="{{ id }}">
 
-                <table class="table table-bordered">
+                <table class="table table-bordered table-dark">
                     <thead>
                     <tr>
                         <th></th>
@@ -33,6 +30,12 @@
                             <tr>
                                 <td><img src="{{ item.item.icon }}" alt="{{ item.name }}"></td>
                                 <td>
+                                    {{ item.item.baseType }}
+                                    {% if ('ilvl' in item.item|keys) %}<br />ilvl: {{ item.item.ilvl }}{% endif %}
+                                    {% if ('influences' in item.item|keys) %}
+                                        <br />Influences: {{ item.item.influences|keys|join(',')|title }}
+                                    {% endif %}
+                                    <hr />
                                     {% if ('implicitMods' in item.item|keys) and (item.item.implicitMods|length) %}
                                         <ul>
                                             {% for m in item.item.implicitMods  %}
@@ -46,18 +49,10 @@
                                             <li>{{ m }}</li>
                                         {% endfor %}
                                     </ul>
-                                    {% if ('ilvl' in item.item|keys) %}
-                                        <hr />
-                                        ilvl: {{ item.item.ilvl }}
-                                    {% endif %}
-                                    {% if ('influences' in item.item|keys) %}
-                                        <hr />
-                                        Influences: {{ item.item.influences|keys|join(',')|title }}
-                                    {% endif %}
                                 </td>
                                 <td>{{ stashName }}</td>
                                 <td>{{ item.points }}</td>
-                                <td><a href="#" class="js-copy-on-click">{{ item.name }}</a></td>
+                                <td><a href="#" class="js-copy-on-click" title="click to copy to clipboard">{{ item.name }}</a></td>
                             </tr>
                     {% endfor %}
                     </tbody>
@@ -66,37 +61,6 @@
             </div>
         {% endfor %}
     </div>
-
-{#    <table class="table table-bordered">#}
-{#        <thead>#}
-{#            <tr>#}
-{#                <th></th>#}
-{#                <th>Mods</th>#}
-{#                <th>Stash</th>#}
-{#                <th>Points</th>#}
-{#                <th>Name</th>#}
-{#            </tr>#}
-{#        </thead>#}
-{#        <tbody>#}
-{#            {% for stashName, items in goodGears %}#}
-{#                {% for item in items %}#}
-{#                <tr>#}
-{#                    <td><img src="{{ item.item.icon }}" alt="{{ item.name }}"></td>#}
-{#                    <td>#}
-{#                        <ul>#}
-{#                            {% for m in item.item.explicitMods  %}#}
-{#                                <li>{{ m }}</li>#}
-{#                            {% endfor %}#}
-{#                        </ul>#}
-{#                    </td>#}
-{#                    <td>{{ stashName }}</td>#}
-{#                    <td>{{ item.points }}</td>#}
-{#                    <td><a href="#" class="js-copy-on-click">{{ item.name }}</a></td>#}
-{#                </tr>#}
-{#                {% endfor %}#}
-{#            {% endfor %}#}
-{#        </tbody>#}
-{#    </table>#}
     <script>
         (function(window, document, $, undefined) {
             $('a.js-copy-on-click').click(function(e) {

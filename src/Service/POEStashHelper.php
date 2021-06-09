@@ -20,11 +20,14 @@ namespace App\Service;
 
 use App\Service\POEItemAppraiserService\POEAppraiseAmuletService;
 use App\Service\POEItemAppraiserService\POEAppraiseBeltService;
+use App\Service\POEItemAppraiserService\POEAppraiseBodyArmourService;
 use App\Service\POEItemAppraiserService\POEAppraiseBootsService;
 use App\Service\POEItemAppraiserService\POEAppraiseGlovesService;
 use App\Service\POEItemAppraiserService\POEAppraiseHelmetService;
 use App\Service\POEItemAppraiserService\POEAppraiseJewelService;
+use App\Service\POEItemAppraiserService\POEAppraiseShieldService;
 use App\Util\StringUtil;
+use App\Value\POEAppraisalPassingScore;
 
 /**
  * Class POEStashHelper.
@@ -44,11 +47,41 @@ class POEStashHelper
      * @var POEStashListFetcherService
      */
     private $POEStashListFetcherService;
+    /**
+     * @var POEAppraiseGlovesService
+     */
+    private $appraiseGlovesService;
+    /**
+     * @var POEAppraiseHelmetService
+     */
+    private $appraiseHelmetService;
+    /**
+     * @var POEAppraiseBodyArmourService
+     */
+    private $appraiseBodyArmourService;
+    /**
+     * @var POEAppraiseBootsService
+     */
+    private $appraiseBootsService;
+    /**
+     * @var POEAppraiseShieldService
+     */
+    private $appraiseShieldService;
 
-    public function __construct(POEWebsiteBrowserService $POEWebsiteBrowserService, POEStashListFetcherService $POEStashListFetcherService) {
-
+    public function __construct(POEWebsiteBrowserService $POEWebsiteBrowserService,
+                                POEStashListFetcherService $POEStashListFetcherService,
+                                POEAppraiseGlovesService $appraiseGlovesService,
+                                POEAppraiseHelmetService $appraiseHelmetService,
+                                POEAppraiseBodyArmourService $appraiseBodyArmourService,
+                                POEAppraiseBootsService $appraiseBootsService,
+                                POEAppraiseShieldService $appraiseShieldService) {
         $this->POEWebsiteBrowserService = $POEWebsiteBrowserService;
         $this->POEStashListFetcherService = $POEStashListFetcherService;
+        $this->appraiseGlovesService = $appraiseGlovesService;
+        $this->appraiseHelmetService = $appraiseHelmetService;
+        $this->appraiseBodyArmourService = $appraiseBodyArmourService;
+        $this->appraiseBootsService = $appraiseBootsService;
+        $this->appraiseShieldService = $appraiseShieldService;
     }
 
     public function findHighValueItems() {
@@ -71,6 +104,9 @@ class POEStashHelper
             'belts' => 0,
             'helmets' => 0,
             'jewels' => 0,
+            'body_armours' => 0,
+            'shields_2x2' => 0,
+            'shields_2x3' => 0,
         ];
 
         $items = [];
@@ -143,7 +179,7 @@ class POEStashHelper
                         if ($points > $highestPoint['amulet']) {
                             $highestPoint['amulet'] = $points;
                         }
-                        if ($points >= 7) {
+                        if ($points >= POEAppraisalPassingScore::AMULET_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -158,7 +194,7 @@ class POEStashHelper
                         if ($points > $highestPoint['ring']) {
                             $highestPoint['ring'] = $points;
                         }
-                        if ($points >= 7) {
+                        if ($points >= POEAppraisalPassingScore::RING_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -173,7 +209,7 @@ class POEStashHelper
                         if ($points > $highestPoint['jewels']) {
                             $highestPoint['jewels'] = $points;
                         }
-                        if ($points >= 2) {
+                        if ($points >= POEAppraisalPassingScore::JEWEL_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -187,12 +223,12 @@ class POEStashHelper
 
                 elseif ( $item['w'] === 2 && $item['h'] === 2 ) {
                     if( StringUtil::endsWith($item['baseType'], ' Mitts') || StringUtil::endsWith($item['baseType'], ' Gloves') || StringUtil::endsWith($item['baseType'], ' Gauntlets') ) {
-                        $appraisal = POEAppraiseGlovesService::appraise($item);
+                        $appraisal = $this->appraiseGlovesService->appraise($item);
                         $points = $appraisal['points'];
                         if ($points > $highestPoint['gloves']) {
                             $highestPoint['gloves'] = $points;
                         }
-                        if ($points >= 7) {
+                        if ($points >= POEAppraisalPassingScore::GLOVES_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -201,13 +237,19 @@ class POEStashHelper
                             ];
                         }
                     }
-                    elseif( StringUtil::endsWith($item['baseType'], ' Greaves') || StringUtil::endsWith($item['baseType'], ' Boots') || StringUtil::endsWith($item['baseType'], ' Slippers') ) {
-                        $appraisal = POEAppraiseBootsService::appraise($item);
+                    elseif(
+                        StringUtil::endsWith($item['baseType'], ' Greaves')
+                        || StringUtil::endsWith($item['baseType'], ' Boots')
+                        || StringUtil::endsWith($item['baseType'], ' Slippers')
+                        || StringUtil::endsWith($item['baseType'], ' Shoes')
+                        || StringUtil::endsWith($item['baseType'], ' Treads')
+                    ) {
+                        $appraisal = $this->appraiseBootsService->appraise($item);
                         $points = $appraisal['points'];
                         if ($points > $highestPoint['boots']) {
                             $highestPoint['boots'] = $points;
                         }
-                        if ($points >= 5) {
+                        if ($points >= POEAppraisalPassingScore::BOOTS_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -233,12 +275,31 @@ class POEStashHelper
                         || StringUtil::endsWith($item['baseType'], ' Coif')
                         || StringUtil::endsWith($item['baseType'], ' Crown')
                     ) {
-                        $appraisal = POEAppraiseHelmetService::appraise($item);
+                        $appraisal = $this->appraiseHelmetService->appraise($item);
                         $points = $appraisal['points'];
                         if ($points > $highestPoint['helmets']) {
                             $highestPoint['helmets'] = $points;
                         }
-                        if ($points >= 8) {
+                        if ($points >= POEAppraisalPassingScore::HELMET_PASSING_SCORE) {
+                            $goodGears[$stash['n']][] = [
+                                'points' => $points,
+                                'name' => $item['name'] . ' ' . $item['baseType'],
+                                'stashName' => $stash['n'],
+                                'item' => $item
+                            ];
+                        }
+                    }
+                    elseif(
+                        StringUtil::endsWith($item['baseType'], ' Buckler')
+                        || StringUtil::endsWith($item['baseType'], ' Spirit Shield')
+                        || StringUtil::endsWith($item['baseType'], ' Spiked Shield')
+                    ) {
+                        $appraisal = $this->appraiseShieldService->appraise($item);
+                        $points = $appraisal['points'];
+                        if ($points > $highestPoint['shields_2x2']) {
+                            $highestPoint['shields_2x2'] = $points;
+                        }
+                        if ($points >= POEAppraisalPassingScore::SHIELD_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -256,7 +317,7 @@ class POEStashHelper
                         if ($points > $highestPoint['belts']) {
                             $highestPoint['belts'] = $points;
                         }
-                        if ($points >= 5) {
+                        if ($points >= POEAppraisalPassingScore::BELT_PASSING_SCORE) {
                             $goodGears[$stash['n']][] = [
                                 'points' => $points,
                                 'name' => $item['name'] . ' ' . $item['baseType'],
@@ -266,6 +327,72 @@ class POEStashHelper
                         }
                     }
                 } // ( $item['w'] === 2 && $item['h'] === 2 )
+
+                elseif ( $item['w'] === 2 && $item['h'] === 3 ) {
+                    if(
+                        StringUtil::endsWith($item['baseType'], ' Plate')
+                        || StringUtil::endsWith($item['baseType'], 'Chestplate')
+                        || StringUtil::endsWith($item['baseType'], ' Vest')
+                        || StringUtil::endsWith($item['baseType'], ' Vest')
+                        || StringUtil::endsWith($item['baseType'], ' Jerkin')
+                        || StringUtil::endsWith($item['baseType'], ' Leather')
+                        || StringUtil::endsWith($item['baseType'], ' Tunic')
+                        || StringUtil::endsWith($item['baseType'], ' Garb')
+                        || StringUtil::endsWith($item['baseType'], ' Robe')
+                        || StringUtil::endsWith($item['baseType'], ' Vestment')
+                        || StringUtil::endsWith($item['baseType'], ' Regalia')
+                        || StringUtil::endsWith($item['baseType'], ' Wrap')
+                        || StringUtil::endsWith($item['baseType'], ' Silks')
+                        || StringUtil::endsWith($item['baseType'], ' Brigandine')
+                        || StringUtil::endsWith($item['baseType'], ' Doublet')
+                        || StringUtil::endsWith($item['baseType'], ' Armour')
+                        || StringUtil::endsWith($item['baseType'], ' Lamellar')
+                        || StringUtil::endsWith($item['baseType'], ' Wyrmscale')
+                        || StringUtil::endsWith($item['baseType'], ' Dragonscale')
+                        || StringUtil::endsWith($item['baseType'], ' Coat')
+                        || StringUtil::endsWith($item['baseType'], ' Ringmail')
+                        || StringUtil::endsWith($item['baseType'], ' Chainmail')
+                        || StringUtil::endsWith($item['baseType'], ' Hauberk')
+                        || StringUtil::endsWith($item['baseType'], ' Jacket')
+                        || StringUtil::endsWith($item['baseType'], ' Garb')
+                        || StringUtil::endsWith($item['baseType'], ' Raiment')
+                        || StringUtil::endsWith($item['baseType'], ' Mail')
+                    ) {
+                        $appraisal = $this->appraiseBodyArmourService->appraise($item);
+                        $points = $appraisal['points'];
+                        if ($points > $highestPoint['body_armours']) {
+                            $highestPoint['body_armours'] = $points;
+                        }
+                        if ($points >= POEAppraisalPassingScore::BODY_ARMOUR_PASSING_SCORE) {
+                            $goodGears[$stash['n']][] = [
+                                'points' => $points,
+                                'name' => $item['name'] . ' ' . $item['baseType'],
+                                'stashName' => $stash['n'],
+                                'item' => $item
+                            ];
+                        }
+                    }
+
+                    elseif(
+                        StringUtil::endsWith($item['baseType'], ' Tower Shield')
+                        || StringUtil::endsWith($item['baseType'], ' Round Shield')
+                        || StringUtil::endsWith($item['baseType'], ' Kite Shield')
+                    ) {
+                        $appraisal = $this->appraiseShieldService->appraise($item);
+                        $points = $appraisal['points'];
+                        if ($points > $highestPoint['shields_2x2']) {
+                            $highestPoint['shields_2x2'] = $points;
+                        }
+                        if ($points >= POEAppraisalPassingScore::SHIELD_PASSING_SCORE) {
+                            $goodGears[$stash['n']][] = [
+                                'points' => $points,
+                                'name' => $item['name'] . ' ' . $item['baseType'],
+                                'stashName' => $stash['n'],
+                                'item' => $item
+                            ];
+                        }
+                    }
+                } // ( $item['w'] === 2 && $item['h'] === 3 )
 
             }
         }
