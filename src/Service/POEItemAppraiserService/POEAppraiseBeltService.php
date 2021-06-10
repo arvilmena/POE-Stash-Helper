@@ -5,10 +5,29 @@ namespace App\Service\POEItemAppraiserService;
 
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
+use App\Util\StringUtil;
+use App\Value\POEAppraisalPassingScore;
+use App\Value\POEBelts;
 
 class POEAppraiseBeltService {
 
-    public static function appraise($item) {
+    /**
+     * @var POEBelts
+     */
+    private $poeBelts;
+    /**
+     * @var POEAppraisalPassingScore
+     */
+    private $passingScore;
+
+    public function __construct(POEBelts $poeBelts, POEAppraisalPassingScore $passingScore)
+    {
+
+        $this->poeBelts = $poeBelts;
+        $this->passingScore = $passingScore;
+    }
+
+    public function appraise($item) {
 
         $points = 0;
 
@@ -111,6 +130,15 @@ class POEAppraiseBeltService {
         if ( $tally['explicitMods']['increasedElementalDamageWithAtk'] >= 43 ) {
             $points++;
             $points++;
+        }
+
+        if (
+            (!empty($item['influences']))
+            && (intval($item['ilvl']) >= 80)
+            && ( in_array($item['baseType'], $this->poeBelts->getAllTier1()) )
+        ) {
+            $points = $points + $this->passingScore::BELT_PASSING_SCORE;
+            $points = $points + (intval($item['ilvl']) - 80);
         }
 
         return [

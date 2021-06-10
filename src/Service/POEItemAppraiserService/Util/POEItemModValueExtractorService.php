@@ -29,6 +29,132 @@ class POEItemModValueExtractorService {
     const CORRUPTED_BLOOD_IMMUNITY = '/Corrupted Blood cannot be inflicted on you/';
     const SILENCE_IMMUNITY = '/You cannot be Cursed with Silence/';
     const HINDER_IMMUNITY = '/You cannot be Hindered/';
+    const PLUS_LEVEL_GEM_SPELL_PHYSICAL = '/(\+(\d+) to Level of all Physical Spell Skill Gems)/';
+    const PLUS_LEVEL_GEM_SPELL_CHAOS = '/(\+(\d+) to Level of all Chaos Spell Skill Gems)/';
+    const PLUS_LEVEL_GEM_SPELL_COLD = '/(\+(\d+) to Level of all Cold Spell Skill Gems)/';
+    const PLUS_LEVEL_GEM_SPELL_FIRE = '/(\+(\d+) to Level of all Fire Spell Skill Gems)/';
+    const PLUS_LEVEL_GEM_SPELL_LIGHTNING = '/(\+(\d+) to Level of all Lightning Spell Skill Gems)/';
+    const PLUS_DAMAGE_OVERTIME_MULTIPLIER_CHAOS = '/(\+(\d+)\% to Chaos Damage over Time Multiplier)/';
+
+    public static function getFlatDamageOvertimeMultiplierChaos(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PLUS_DAMAGE_OVERTIME_MULTIPLIER_CHAOS, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getPlusLevelGemLightningSpell(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PLUS_LEVEL_GEM_SPELL_LIGHTNING, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getPlusLevelGemFireSpell(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PLUS_LEVEL_GEM_SPELL_FIRE, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getPlusLevelGemColdSpell(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PLUS_LEVEL_GEM_SPELL_COLD, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getPlusLevelGemChaosSpell(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PLUS_LEVEL_GEM_SPELL_CHAOS, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
+
+    public static function getPlusLevelGemPhysicalSpell(array $item) : array
+    {
+        $tally = [
+            'implicitMods' => 0,
+            'explicitMods' => 0,
+        ];
+        foreach($tally as $key => $total) {
+            if (empty($item[$key])) {
+                continue;
+            }
+            foreach ($item[$key] as $mod) {
+                preg_match(self::PLUS_LEVEL_GEM_SPELL_PHYSICAL, $mod, $matches);
+                if (!empty($matches) && ! empty($matches[2]) && is_numeric($matches[2])) {
+                    $tally[$key] = $tally[$key] + $matches[2];
+                }
+            }
+        }
+        return $tally;
+    }
 
     public static function isHinderImmune(array $item) : array
     {
@@ -478,6 +604,11 @@ class POEItemModValueExtractorService {
                 'isCorruptedBloodImmune' => self::isCorruptedBloodImmune($item)[$modType],
                 'isSilenceImmune' => self::isSilenceImmune($item)[$modType],
                 'isHinderImmune' => self::isHinderImmune($item)[$modType],
+                'plusLevelGemPhysicalSpell' => self::getPlusLevelGemPhysicalSpell($item)[$modType],
+                'plusLevelGemChaosSpell' => self::getPlusLevelGemChaosSpell($item)[$modType],
+                'plusLevelGemFireSpell' => self::getPlusLevelGemFireSpell($item)[$modType],
+                'plusLevelGemColdSpell' => self::getPlusLevelGemColdSpell($item)[$modType],
+                'plusLevelGemLightningSpell' => self::getPlusLevelGemLightningSpell($item)[$modType],
             ];
         }
         return $result;

@@ -67,6 +67,14 @@ class POEStashHelper
      * @var POEAppraiseShieldService
      */
     private $appraiseShieldService;
+    /**
+     * @var POEAppraiseBeltService
+     */
+    private $appraiseBeltService;
+    /**
+     * @var POEAppraiseAmuletService
+     */
+    private $appraiseAmuletService;
 
     public function __construct(POEWebsiteBrowserService $POEWebsiteBrowserService,
                                 POEStashListFetcherService $POEStashListFetcherService,
@@ -74,7 +82,9 @@ class POEStashHelper
                                 POEAppraiseHelmetService $appraiseHelmetService,
                                 POEAppraiseBodyArmourService $appraiseBodyArmourService,
                                 POEAppraiseBootsService $appraiseBootsService,
-                                POEAppraiseShieldService $appraiseShieldService) {
+                                POEAppraiseShieldService $appraiseShieldService,
+                                POEAppraiseBeltService $appraiseBeltService,
+                                POEAppraiseAmuletService $appraiseAmuletService) {
         $this->POEWebsiteBrowserService = $POEWebsiteBrowserService;
         $this->POEStashListFetcherService = $POEStashListFetcherService;
         $this->appraiseGlovesService = $appraiseGlovesService;
@@ -82,6 +92,8 @@ class POEStashHelper
         $this->appraiseBodyArmourService = $appraiseBodyArmourService;
         $this->appraiseBootsService = $appraiseBootsService;
         $this->appraiseShieldService = $appraiseShieldService;
+        $this->appraiseBeltService = $appraiseBeltService;
+        $this->appraiseAmuletService = $appraiseAmuletService;
     }
 
     public function findHighValueItems() {
@@ -174,7 +186,7 @@ class POEStashHelper
                 ($item['w'] === 1 && $item['h'] === 1)
                 ) {
                     if( StringUtil::endsWith($item['baseType'], ' Amulet') || StringUtil::endsWith($item['baseType'], ' Talisman') ) {
-                        $appraisal = POEAppraiseAmuletService::appraise($item);
+                        $appraisal = $this->appraiseAmuletService->appraise($item);
                         $points = $appraisal['points'];
                         if ($points > $highestPoint['amulet']) {
                             $highestPoint['amulet'] = $points;
@@ -189,7 +201,7 @@ class POEStashHelper
                         }
                     } elseif ( StringUtil::endsWith($item['baseType'], ' Ring') ) {
                         // ring
-                        $appraisal = POEAppraiseAmuletService::appraise($item);
+                        $appraisal = $this->appraiseAmuletService->appraise($item);
                         $points = $appraisal['points'];
                         if ($points > $highestPoint['ring']) {
                             $highestPoint['ring'] = $points;
@@ -312,7 +324,7 @@ class POEStashHelper
 
                 elseif ( $item['w'] === 2 && $item['h'] === 1 ) {
                     if( StringUtil::endsWith($item['baseType'], ' Belt') || StringUtil::endsWith($item['baseType'], ' Sash') || StringUtil::endsWith($item['baseType'], ' Vise') ) {
-                        $appraisal = POEAppraiseBeltService::appraise($item);
+                        $appraisal = $this->appraiseBeltService->appraise($item);
                         $points = $appraisal['points'];
                         if ($points > $highestPoint['belts']) {
                             $highestPoint['belts'] = $points;

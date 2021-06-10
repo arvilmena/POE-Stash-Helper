@@ -6,10 +6,27 @@ namespace App\Service\POEItemAppraiserService;
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
 use App\Util\StringUtil;
+use App\Value\POEAppraisalPassingScore;
+use App\Value\POERings;
 
 class POEAppraiseAmuletService {
 
-    public static function appraise($item) {
+    /**
+     * @var POERings
+     */
+    private $poeRings;
+    /**
+     * @var POEAppraisalPassingScore
+     */
+    private $appraisalPassingScore;
+
+    public function __construct(POERings $poeRings, POEAppraisalPassingScore $appraisalPassingScore) {
+
+        $this->poeRings = $poeRings;
+        $this->appraisalPassingScore = $appraisalPassingScore;
+    }
+
+    public function appraise($item) {
 
         $points = 0;
 
@@ -125,7 +142,16 @@ class POEAppraiseAmuletService {
                 && ! StringUtil::endsWith($item['baseType'], 'Gold Amulet')
             )
         ) {
-            $points = $points + 7;
+            $points = $points + $this->appraisalPassingScore::AMULET_PASSING_SCORE;
+        }
+
+        if (
+            in_array($item['baseType'], $this->poeRings->getAllTier1())
+            && (!empty($item['influences']))
+            && (intval($item['ilvl']) >= 80)
+        ) {
+            $points = $points + $this->appraisalPassingScore::AMULET_PASSING_SCORE;
+            $points = $points + (intval($item['ilvl']) - 80);
         }
 
         return [
