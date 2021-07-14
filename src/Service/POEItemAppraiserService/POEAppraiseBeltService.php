@@ -141,6 +141,15 @@ class POEAppraiseBeltService {
             $points = $points + (intval($item['ilvl']) - 80);
         }
 
+        // high ilvl special bases
+        if (
+            in_array($item['baseType'], $this->poeBelts->getSpecialBases())
+            && (intval($item['ilvl']) >= 84)
+        ) {
+            $points = $points + $this->passingScore::BELT_PASSING_SCORE;
+            $points = $points + (intval($item['ilvl']) >= 84);
+        }
+
         return [
             'points' => $points,
             'tally' => $tally

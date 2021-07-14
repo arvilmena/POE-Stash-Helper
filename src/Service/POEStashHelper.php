@@ -75,6 +75,10 @@ class POEStashHelper
      * @var POEAppraiseAmuletService
      */
     private $appraiseAmuletService;
+    /**
+     * @var POEAppraiseJewelService
+     */
+    private $appraiseJewelService;
 
     public function __construct(POEWebsiteBrowserService $POEWebsiteBrowserService,
                                 POEStashListFetcherService $POEStashListFetcherService,
@@ -84,7 +88,8 @@ class POEStashHelper
                                 POEAppraiseBootsService $appraiseBootsService,
                                 POEAppraiseShieldService $appraiseShieldService,
                                 POEAppraiseBeltService $appraiseBeltService,
-                                POEAppraiseAmuletService $appraiseAmuletService) {
+                                POEAppraiseAmuletService $appraiseAmuletService,
+                                POEAppraiseJewelService $appraiseJewelService) {
         $this->POEWebsiteBrowserService = $POEWebsiteBrowserService;
         $this->POEStashListFetcherService = $POEStashListFetcherService;
         $this->appraiseGlovesService = $appraiseGlovesService;
@@ -94,9 +99,11 @@ class POEStashHelper
         $this->appraiseShieldService = $appraiseShieldService;
         $this->appraiseBeltService = $appraiseBeltService;
         $this->appraiseAmuletService = $appraiseAmuletService;
+        $this->appraiseJewelService = $appraiseJewelService;
     }
 
-    public function findHighValueItems() {
+    public function findHighValueItems($verbose = false): array
+    {
         $stashes = $this->POEStashListFetcherService->getAllStash($this->POEWebsiteBrowserService);
 
         // only those that starts with "D" and ends with number as its name:
@@ -146,6 +153,10 @@ class POEStashHelper
             }
 
             foreach($items as $item) {
+                if ($verbose) {
+                    echo 'processing: ' . var_dump($item);
+                    echo PHP_EOL;
+                }
                 // only identified items
                 if (!empty($item['stackSize'])) {
                     continue;
@@ -171,7 +182,7 @@ class POEStashHelper
                 ) {
                     continue;
                 }
-                if (empty($item['name'])){
+                if (empty($item['baseType'])){
                     continue;
                 }
                 if (true !== $item['identified']){
@@ -179,6 +190,10 @@ class POEStashHelper
                 }
                 if (empty($item['explicitMods'])){
                     continue;
+                }
+                if ($verbose) {
+                    echo '> ' . $item['name'] . ' ' . $item['baseType'] . ' passed initial conditions';
+                    echo PHP_EOL;
                 }
 
                 // check if ring or amulet
@@ -188,6 +203,10 @@ class POEStashHelper
                     if( StringUtil::endsWith($item['baseType'], ' Amulet') || StringUtil::endsWith($item['baseType'], ' Talisman') ) {
                         $appraisal = $this->appraiseAmuletService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
+
                         if ($points > $highestPoint['amulet']) {
                             $highestPoint['amulet'] = $points;
                         }
@@ -203,6 +222,9 @@ class POEStashHelper
                         // ring
                         $appraisal = $this->appraiseAmuletService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['ring']) {
                             $highestPoint['ring'] = $points;
                         }
@@ -216,8 +238,11 @@ class POEStashHelper
                         }
                     } elseif ( StringUtil::endsWith($item['baseType'], ' Jewel') ) {
                         // ring
-                        $appraisal = POEAppraiseJewelService::appraise($item);
+                        $appraisal = $this->appraiseJewelService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['jewels']) {
                             $highestPoint['jewels'] = $points;
                         }
@@ -237,6 +262,9 @@ class POEStashHelper
                     if( StringUtil::endsWith($item['baseType'], ' Mitts') || StringUtil::endsWith($item['baseType'], ' Gloves') || StringUtil::endsWith($item['baseType'], ' Gauntlets') ) {
                         $appraisal = $this->appraiseGlovesService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['gloves']) {
                             $highestPoint['gloves'] = $points;
                         }
@@ -258,6 +286,9 @@ class POEStashHelper
                     ) {
                         $appraisal = $this->appraiseBootsService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['boots']) {
                             $highestPoint['boots'] = $points;
                         }
@@ -289,6 +320,9 @@ class POEStashHelper
                     ) {
                         $appraisal = $this->appraiseHelmetService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['helmets']) {
                             $highestPoint['helmets'] = $points;
                         }
@@ -308,6 +342,9 @@ class POEStashHelper
                     ) {
                         $appraisal = $this->appraiseShieldService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['shields_2x2']) {
                             $highestPoint['shields_2x2'] = $points;
                         }
@@ -326,6 +363,9 @@ class POEStashHelper
                     if( StringUtil::endsWith($item['baseType'], ' Belt') || StringUtil::endsWith($item['baseType'], ' Sash') || StringUtil::endsWith($item['baseType'], ' Vise') ) {
                         $appraisal = $this->appraiseBeltService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['belts']) {
                             $highestPoint['belts'] = $points;
                         }
@@ -372,6 +412,9 @@ class POEStashHelper
                     ) {
                         $appraisal = $this->appraiseBodyArmourService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['body_armours']) {
                             $highestPoint['body_armours'] = $points;
                         }
@@ -392,6 +435,9 @@ class POEStashHelper
                     ) {
                         $appraisal = $this->appraiseShieldService->appraise($item);
                         $points = $appraisal['points'];
+                        if ($verbose) {
+                            echo 'points: ' .  $points;
+                        }
                         if ($points > $highestPoint['shields_2x2']) {
                             $highestPoint['shields_2x2'] = $points;
                         }
@@ -405,6 +451,10 @@ class POEStashHelper
                         }
                     }
                 } // ( $item['w'] === 2 && $item['h'] === 3 )
+
+                if ($verbose) {
+                    echo PHP_EOL;
+                }
 
             }
         }

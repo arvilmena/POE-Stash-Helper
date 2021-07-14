@@ -52,7 +52,7 @@
                                 </td>
                                 <td>{{ stashName }}</td>
                                 <td>{{ item.points }}</td>
-                                <td><a href="#" class="js-copy-on-click" title="click to copy to clipboard">{{ item.name }}</a></td>
+                                <td><a href="#" class="js-copy-on-click" title="click to copy to clipboard">{{ (item.item.name|length) ? item.name : item.item.typeLine }}</a></td>
                             </tr>
                     {% endfor %}
                     </tbody>

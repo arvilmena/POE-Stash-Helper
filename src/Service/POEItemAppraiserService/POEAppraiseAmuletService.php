@@ -146,12 +146,21 @@ class POEAppraiseAmuletService {
         }
 
         if (
-            in_array($item['baseType'], $this->poeRings->getAllTier1())
-            && (!empty($item['influences']))
+            (!empty($item['influences']))
+            && in_array($item['baseType'], $this->poeRings->getAllTier1())
             && (intval($item['ilvl']) >= 80)
         ) {
             $points = $points + $this->appraisalPassingScore::AMULET_PASSING_SCORE;
             $points = $points + (intval($item['ilvl']) - 80);
+        }
+
+        // high ilvl special bases
+        if (
+            in_array($item['baseType'], $this->poeRings->getSpecialBases())
+            && (intval($item['ilvl']) >= 84)
+        ) {
+            $points = $points + $this->appraisalPassingScore::AMULET_PASSING_SCORE;
+            $points = $points + (intval($item['ilvl']) >= 84);
         }
 
         return [

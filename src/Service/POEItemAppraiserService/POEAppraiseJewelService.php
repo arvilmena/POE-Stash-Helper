@@ -5,11 +5,22 @@ namespace App\Service\POEItemAppraiserService;
 
 
 use App\Service\POEItemAppraiserService\Util\POEItemModValueExtractorService;
+use App\Value\POEAppraisalPassingScore;
 
 class POEAppraiseJewelService {
 
+    /**
+     * @var POEAppraisalPassingScore
+     */
+    private $passingScore;
 
-    public static function appraise($item) {
+    public function __construct(POEAppraisalPassingScore $passingScore)
+    {
+        $this->passingScore = $passingScore;
+    }
+
+
+    public function appraise($item) {
 
         $points = 0;
 
@@ -21,31 +32,27 @@ class POEAppraiseJewelService {
         }
 
         if ( $tally['explicitMods']['percentLife'] > 0 ) {
-            $points++;
-            $points++;
+            $points = $points + $this->passingScore::JEWEL_PASSING_SCORE;
         }
         if ( $tally['explicitMods']['percentLife'] >= 7 ) {
-            $points++;
             $points++;
         }
 
         if ( $tally['explicitMods']['percentMana'] > 0 ) {
-            $points++;
-            $points++;
+            $points = $points + $this->passingScore::JEWEL_PASSING_SCORE;
         }
         if ( $tally['explicitMods']['percentMana'] >= 10 ) {
-            $points++;
             $points++;
         }
 
         if ( $tally['explicitMods']['isCorruptedBloodImmune'] ) {
-            $points = $points + 5;
+            $points = $points + $this->passingScore::JEWEL_PASSING_SCORE;
         }
         if ( $tally['implicitMods']['isSilenceImmune'] ) {
-            $points = $points + 2;
+            $points = $points + $this->passingScore::JEWEL_PASSING_SCORE;
         }
         if ( $tally['implicitMods']['isHinderImmune'] ) {
-            $points = $points + 2;
+            $points = $points + $this->passingScore::JEWEL_PASSING_SCORE;
         }
 
         return [
